@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Détail chat — Refuge Animalier</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── BACK BUTTON ── */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 22px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-back:hover { border-color: var(--green); color: var(--green-dark); }
+
+    /* ── DETAIL LAYOUT ── */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 720px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── LEFT COLUMN ── */
+    .detail-left { display: flex; flex-direction: column; gap: 16px; }
+
+    .main-photo-wrap {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-md);
+      aspect-ratio: 4/3;
+    }
+    .main-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s;
+    }
+
+    .thumbnails {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .thumbnails img {
+      width: 72px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--gray-border);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color .2s, transform .2s;
+    }
+    .thumbnails img:hover { transform: scale(1.06); }
+    .thumbnails img.active { border-color: var(--green); }
+
+    /* ── CAT INFO CARD ── */
+    .info-card {
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 20px;
+    }
+    .info-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .info-card-name {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text);
+      font-family: 'Lora', serif;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: .9rem;
+    }
+    .info-label {
+      font-weight: 800;
+      color: var(--text-muted);
+      min-width: 90px;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .info-value { font-weight: 600; }
+
+    /* ── BIO ── */
+    .bio-card {
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 20px;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: .92rem;
+      line-height: 1.75;
+      color: var(--text);
+      position: relative;
+    }
+    .bio-card::before {
+      content: '"';
+      font-size: 4rem;
+      color: var(--green-lighter);
+      position: absolute;
+      top: -8px;
+      left: 12px;
+      font-family: 'Lora', serif;
+      line-height: 1;
+    }
+    .bio-text { padding-left: 22px; }
+
+    /* ── RIGHT COLUMN ── */
+    .detail-right { display: flex; flex-direction: column; gap: 16px; }
+
+    /* ── STATUS CARD ── */
+    .status-card {
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 22px;
+    }
+    .status-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .status-label {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .status-select {
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ── SANTÉ CARD ── */
+    .sante-card {
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 22px;
+    }
+    .sante-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: .82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--text-muted);
+    }
+    .sante-text {
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .sante-edit { display: none; }
+
+    /* ── FOYER CARD ── */
+    .foyer-card {
+      background: white;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-sm);
+      padding: 18px 22px;
+    }
+    .foyer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .foyer-name {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .foyer-row {
+      font-size: .88rem;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      gap: 8px;
+    }
+    .foyer-row span:first-child {
+      color: var(--text-muted);
+      font-size: .76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      min-width: 72px;
+    }
+    .no-foyer {
+      font-size: .88rem;
+      color: var(--text-muted);
+      font-style: italic;
+      font-family: 'Lora', serif;
+    }
+
+    /* ── NOT FOUND ── */
+    .not-found {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .not-found .emoji { font-size: 3.5rem; margin-bottom: 12px; }
+    .not-found p { font-size: 1rem; font-weight: 600; }
+
+    /* ── INLINE EDIT ── */
+    .edit-inline {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .edit-inline select, .edit-inline textarea {
+      flex: 1;
+    }
+    .btn-save {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-save:hover { background: var(--green-dark); }
+    .btn-cancel-edit {
+      background: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: .78rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="paws-bg" id="pawsBg"></div>
+  <div class="deco-cats">🐱🐱🐱🐱</div>
+  <div class="toast" id="toast"></div>
+
+  <header class="header" id="appHeader"></header>
+  <nav class="navbar" id="appNav"></nav>
+
+  <main class="main fade-in">
+    <a href="cats.html" class="btn-back">← Retour à la liste</a>
+    <div id="detailContent"></div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script>
+    requireAuth();
+    injectHeader('');
+    initPaws();
+
+    // ── GET CAT FROM URL PARAM ──────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const catId  = parseInt(params.get('id'));
+    let cat      = CATS_DATA.find(c => c.id === catId);
+
+    const container = document.getElementById('detailContent');
+
+    if (!cat) {
+      container.innerHTML = `
+        <div class="not-found">
+          <div class="emoji">🐾</div>
+          <p>Ce chat est introuvable.</p>
+          <br/>
+          <a href="cats.html" class="btn-secondary">← Retour à la liste</a>
+        </div>`;
+    } else {
+      renderDetail();
+    }
+
+    // ── RENDER DETAIL ───────────────────────────────────────────
+    function renderDetail() {
+      // Update page title
+      document.title = `${cat.nom} — Refuge Animalier`;
+
+      const foyerHtml = cat.foyer ? `
+        <div class="foyer-name">${cat.foyer.nom}</div>
+        <div class="foyer-row"><span>Adresse</span><span>${cat.foyer.adresse}</span></div>
+        <div class="foyer-row"><span>Tél.</span><span>${cat.foyer.tel}</span></div>
+        <div class="foyer-row"><span>Contact</span><span>${cat.foyer.contact}</span></div>
+      ` : `<p class="no-foyer">Aucun foyer d'adoption assigné pour l'instant.</p>`;
+
+      const thumbsHtml = cat.photos.map((src, i) =>
+        `<img src="${src}" class="${i===0?'active':''}" data-idx="${i}" alt="Photo ${i+1}" loading="lazy" />`
+      ).join('');
+
+      container.innerHTML = `
+        <div class="detail-grid">
+          <!-- LEFT -->
+          <div class="detail-left">
+            <div class="main-photo-wrap">
+              <img class="main-photo" id="mainPhoto" src="${cat.photos[0]}" alt="${cat.nom}" />
+            </div>
+            <div class="thumbnails" id="thumbnails">${thumbsHtml}</div>
+
+            <div class="info-card">
+              <div class="info-card-header">
+                <span class="info-card-name">${cat.nom}</span>
+                <button class="btn-icon" title="Modifier">✏️</button>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Sexe</span>
+                <span class="info-value">${cat.sexe === 'M' ? '♂ Mâle' : '♀ Femelle'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Puce</span>
+                <span class="info-value">${cat.puce}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Naissance</span>
+                <span class="info-value">${cat.naissance}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Couleur</span>
+                <span class="info-value">${cat.couleur}</span>
+              </div>
+            </div>
+
+            <div class="bio-card">
+              <div class="bio-text">${cat.description}"</div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="detail-right">
+            <!-- Statut -->
+            <div class="status-card">
+              <div class="status-card-header">
+                <span>Statut</span>
+                <button class="btn-icon" id="editStatutBtn" title="Modifier le statut">✏️</button>
+              </div>
+              <div id="statutDisplay">
+                <span class="status-label">Statut : </span>${statusBadge(cat.statut)}
+              </div>
+              <div class="status-select" id="statutEdit">
+                <div class="edit-inline">
+                  <select id="statutSelect">
+                    <option value="disponible" ${cat.statut==='disponible'?'selected':''}>Disponible</option>
+                    <option value="réservé"    ${cat.statut==='réservé'?'selected':''}>Réservé</option>
+                    <option value="adopté"     ${cat.statut==='adopté'?'selected':''}>Adopté</option>
+                  </select>
+                  <button class="btn-save" id="saveStatut">Enregistrer</button>
+                  <button class="btn-cancel-edit" id="cancelStatut">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Santé -->
+            <div class="sante-card">
+              <div class="sante-card-header">
+                <span class="section-title">🩺 Santé</span>
+                <button class="btn-icon" id="editSanteBtn" title="Modifier la santé">✏️</button>
+              </div>
+              <div class="sante-text" id="santeDisplay">${cat.sante || '<em style="color:var(--text-muted)">Aucune information renseignée.</em>'}</div>
+              <div class="sante-edit" id="santeEdit">
+                <textarea id="santeTextarea" rows="3">${cat.sante}</textarea>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button class="btn-save" id="saveSante">Enregistrer</button>
+                  <button class="btn-cancel-edit" id="cancelSante">Annuler</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Foyer d'adoption -->
+            <div class="foyer-card">
+              <div class="foyer-header">
+                <span class="section-title">🏠 Foyer d'adoption</span>
+                <button class="btn-icon" title="Modifier">✏️</button>
+              </div>
+              ${foyerHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      bindEvents();
+    }
+
+    // ── BIND EVENTS ──────────────────────────────────────────────
+    function bindEvents() {
+      // Thumbnails
+      document.getElementById('thumbnails').addEventListener('click', e => {
+        const img = e.target.closest('img');
+        if (!img) return;
+        const idx = parseInt(img.dataset.idx);
+        document.getElementById('mainPhoto').src = cat.photos[idx];
+        document.querySelectorAll('#thumbnails img').forEach(i => i.classList.remove('active'));
+        img.classList.add('active');
+      });
+
+      // Edit statut
+      document.getElementById('editStatutBtn').addEventListener('click', () => {
+        document.getElementById('statutDisplay').style.display = 'none';
+        document.getElementById('statutEdit').style.display = 'block';
+        document.getElementById('editStatutBtn').style.display = 'none';
+      });
+      document.getElementById('saveStatut').addEventListener('click', () => {
+        cat.statut = document.getElementById('statutSelect').value;
+        document.getElementById('statutDisplay').innerHTML =
+          `<span class="status-label">Statut : </span>${statusBadge(cat.statut)}`;
+        document.getElementById('statutDisplay').style.display = 'block';
+        document.getElementById('statutEdit').style.display = 'none';
+        document.getElementById('editStatutBtn').style.display = '';
+        showToast('✅ Statut mis à jour !');
+      });
+      document.getElementById('cancelStatut').addEventListener('click', () => {
+        document.getElementById('statutDisplay').style.display = 'block';
+        document.getElementById('statutEdit').style.display = 'none';
+        document.getElementById('editStatutBtn').style.display = '';
+      });
+
+      // Edit santé
+      document.getElementById('editSanteBtn').addEventListener('click', () => {
+        document.getElementById('santeDisplay').style.display = 'none';
+        document.getElementById('santeEdit').style.display = 'block';
+        document.getElementById('editSanteBtn').style.display = 'none';
+      });
+      document.getElementById('saveSante').addEventListener('click', () => {
+        cat.sante = document.getElementById('santeTextarea').value;
+        document.getElementById('santeDisplay').textContent = cat.sante;
+        document.getElementById('santeDisplay').style.display = 'block';
+        document.getElementById('santeEdit').style.display = 'none';
+        document.getElementById('editSanteBtn').style.display = '';
+        showToast('✅ Informations santé mises à jour !');
+      });
+      document.getElementById('cancelSante').addEventListener('click', () => {
+        document.getElementById('santeDisplay').style.display = 'block';
+        document.getElementById('santeEdit').style.display = 'none';
+        document.getElementById('editSanteBtn').style.display = '';
+      });
+    }
+  </script>
+</body>
+</html>

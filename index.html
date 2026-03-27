@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Refuge Animalier de Cours-les-Barres</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── LOGIN-SPECIFIC STYLES ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn .6s ease forwards;
+    }
+
+    .login-cats {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: -12px;
+      font-size: 3.6rem;
+      filter: drop-shadow(0 4px 12px rgba(76,158,133,.25));
+      animation: catsFloat 4s ease-in-out infinite;
+    }
+    .login-cats span { display: inline-block; }
+    .login-cats span:nth-child(1) { animation: catBob 4s ease-in-out infinite .0s; }
+    .login-cats span:nth-child(2) { animation: catBob 4s ease-in-out infinite .3s; }
+    .login-cats span:nth-child(3) { animation: catBob 4s ease-in-out infinite .6s; }
+    .login-cats span:nth-child(4) { animation: catBob 4s ease-in-out infinite .9s; }
+
+    @keyframes catBob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    .login-box {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 40px 48px 36px;
+      width: 360px;
+      box-shadow: var(--shadow-lg), 0 0 0 1px var(--gray-border);
+      position: relative;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-dark), var(--green-light));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .login-title {
+      font-size: .82rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .login-error {
+      background: #fde8e8;
+      color: var(--danger);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: .84rem;
+      font-weight: 700;
+      margin-top: 12px;
+      display: none;
+      text-align: center;
+    }
+    .login-error.show { display: block; }
+
+    .btn-primary { width: 100%; margin-top: 20px; padding: 13px; font-size: .88rem; }
+
+    .login-hint {
+      text-align: center;
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      font-style: italic;
+    }
+
+    .site-name {
+      font-family: 'Lora', serif;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 20px;
+      letter-spacing: .3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="paws-bg" id="pawsBg"></div>
+  <div class="deco-cats">🐱🐱🐱🐱</div>
+  <div class="toast" id="toast"></div>
+
+  <div class="login-wrapper">
+    <div class="login-cats">
+      <span>🐱</span><span>🐱</span><span>🐱</span><span>🐱</span>
+    </div>
+
+    <div class="login-box">
+      <p class="login-title">Connexion</p>
+
+      <div class="form-group">
+        <label for="inp-user">Identifiant</label>
+        <input type="text" id="inp-user" placeholder="admin" autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <label for="inp-pass">Mot de passe</label>
+        <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <div class="login-error" id="loginError">
+        ❌ Identifiant ou mot de passe incorrect.
+      </div>
+
+      <button class="btn-primary" id="btnLogin">Valider</button>
+
+      <p class="login-hint">Démo : admin / admin</p>
+    </div>
+
+    <p class="site-name">Refuge Animalier de Cours-les-Barres</p>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script>
+    // If already logged in, redirect
+    if (isLoggedIn()) window.location.href = 'cats.html';
+
+    initPaws();
+
+    function doLogin() {
+      const user = document.getElementById('inp-user').value.trim();
+      const pass = document.getElementById('inp-pass').value;
+      const err  = document.getElementById('loginError');
+
+      if (user === 'admin' && pass === 'admin') {
+        sessionStorage.setItem('refuge_auth', 'true');
+        showToast('✅ Connexion réussie !');
+        setTimeout(() => window.location.href = 'cats.html', 800);
+      } else {
+        err.classList.add('show');
+        document.getElementById('inp-pass').value = '';
+        document.getElementById('inp-pass').focus();
+      }
+    }
+
+    document.getElementById('btnLogin').addEventListener('click', doLogin);
+
+    // Enter key support
+    ['inp-user','inp-pass'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') doLogin();
+      });
+    });
+  </script>
+</body>
+</html>

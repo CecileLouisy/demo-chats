@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accueillir un chat — Refuge Animalier</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .form-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 32px 36px 36px;
+      max-width: 680px;
+      border: 1.5px solid var(--gray-border);
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-dark), var(--green-light));
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .form-section-title {
+      font-size: .78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      margin: 24px 0 14px;
+      padding-top: 18px;
+      border-top: 1.5px solid var(--green-lighter);
+    }
+    .form-section-title:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+
+    /* Photo upload zone */
+    .photo-zone {
+      border: 2px dashed var(--gray-border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: var(--gray-soft);
+      position: relative;
+    }
+    .photo-zone:hover { border-color: var(--green); background: var(--green-bg2); }
+    .photo-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .photo-zone-icon { font-size: 2.2rem; margin-bottom: 8px; }
+    .photo-zone-text { font-size: .88rem; font-weight: 700; color: var(--text-muted); }
+    .photo-zone-hint { font-size: .76rem; color: var(--green-light); margin-top: 4px; }
+
+    .photos-preview {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .photos-preview img {
+      width: 80px; height: 70px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--green-light);
+    }
+
+    /* Success screen */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .success-screen .success-icon { font-size: 4rem; margin-bottom: 16px; }
+    .success-screen h3 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--green-darker);
+      margin-bottom: 8px;
+    }
+    .success-screen p { color: var(--text-muted); font-size: .95rem; margin-bottom: 24px; }
+
+    /* Required indicator */
+    .required::after {
+      content: ' *';
+      color: var(--danger);
+      font-size: .85em;
+    }
+
+    /* Char counter */
+    .char-counter {
+      text-align: right;
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="paws-bg" id="pawsBg"></div>
+  <div class="deco-cats">🐱🐱🐱🐱</div>
+  <div class="toast" id="toast"></div>
+
+  <header class="header" id="appHeader"></header>
+  <nav class="navbar" id="appNav"></nav>
+
+  <main class="main fade-in">
+    <div class="form-card">
+      <!-- FORM -->
+      <div id="formArea">
+        <div class="card-title">Accueillir un chat</div>
+
+        <div class="form-section-title">Informations générales</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="catNom" class="required">Nom</label>
+            <input type="text" id="catNom" placeholder="Ex : Milo" maxlength="50" />
+          </div>
+          <div class="form-group">
+            <label for="catSexe" class="required">Sexe</label>
+            <select id="catSexe">
+              <option value="">— Sélectionner —</option>
+              <option value="M">Mâle</option>
+              <option value="F">Femelle</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="catPuce">Numéro de puce</label>
+            <input type="text" id="catPuce" placeholder="Ex : 250 269 8XX XXX" />
+          </div>
+          <div class="form-group">
+            <label for="catTatouage">Numéro de tatouage</label>
+            <input type="text" id="catTatouage" placeholder="Ex : AB-2025-01" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="catNaissance" class="required">Date de naissance</label>
+            <input type="date" id="catNaissance" />
+          </div>
+          <div class="form-group">
+            <label for="catCouleur">Couleur / robe</label>
+            <select id="catCouleur">
+              <option value="">— Sélectionner —</option>
+              <option>Noir</option>
+              <option>Blanc</option>
+              <option>Roux</option>
+              <option>Gris</option>
+              <option>Noir et blanc</option>
+              <option>Tigré</option>
+              <option>Roux et blanc</option>
+              <option>Tigré brun</option>
+              <option>Autre</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section-title">Description</div>
+        <div class="form-group">
+          <label for="catDescription">Présentation du chat</label>
+          <textarea id="catDescription" rows="4" placeholder="Décrivez le caractère, les habitudes, les préférences du chat…" maxlength="600"></textarea>
+          <div class="char-counter"><span id="descCount">0</span> / 600 caractères</div>
+        </div>
+
+        <div class="form-section-title">Photos</div>
+        <div class="photo-zone" id="photoZone">
+          <input type="file" id="photoInput" accept="image/*" multiple />
+          <div class="photo-zone-icon">📷</div>
+          <div class="photo-zone-text">Cliquez ou glissez des photos ici</div>
+          <div class="photo-zone-hint">JPG, PNG, WEBP — max 5 Mo par fichier</div>
+        </div>
+        <div class="photos-preview" id="photosPreview"></div>
+
+        <div class="form-section-title">Santé</div>
+        <div class="form-group">
+          <label for="catSante">Informations de santé</label>
+          <textarea id="catSante" rows="3" placeholder="Vaccinations, stérilisation, traitements en cours…"></textarea>
+        </div>
+
+        <button class="btn-primary" id="btnSubmit" style="margin-top: 8px;">
+          ✅ Enregistrer le chat
+        </button>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="success-screen" id="successArea">
+        <div class="success-icon">🐾</div>
+        <h3>Chat enregistré avec succès !</h3>
+        <p>Le nouveau résident du refuge a bien été ajouté.</p>
+        <a href="cats.html" class="btn-primary" style="text-decoration:none;display:inline-block;">
+          Voir tous les chats
+        </a>
+        &nbsp;
+        <button class="btn-secondary" id="btnAddAnother">+ Ajouter un autre chat</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script>
+    requireAuth();
+    injectHeader('add');
+    initPaws();
+
+    // ── CHAR COUNTER ─────────────────────────────────────────────
+    const descArea  = document.getElementById('catDescription');
+    const descCount = document.getElementById('descCount');
+    descArea.addEventListener('input', () => {
+      descCount.textContent = descArea.value.length;
+    });
+
+    // ── PHOTO PREVIEW ────────────────────────────────────────────
+    const photoInput   = document.getElementById('photoInput');
+    const photosPreview = document.getElementById('photosPreview');
+
+    photoInput.addEventListener('change', () => {
+      photosPreview.innerHTML = '';
+      Array.from(photoInput.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          photosPreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // ── SUBMIT ───────────────────────────────────────────────────
+    document.getElementById('btnSubmit').addEventListener('click', () => {
+      const nom      = document.getElementById('catNom').value.trim();
+      const sexe     = document.getElementById('catSexe').value;
+      const naissance = document.getElementById('catNaissance').value;
+
+      if (!nom) {
+        showToast('⚠️ Le nom du chat est obligatoire.');
+        document.getElementById('catNom').focus();
+        return;
+      }
+      if (!sexe) {
+        showToast('⚠️ Veuillez sélectionner le sexe.');
+        document.getElementById('catSexe').focus();
+        return;
+      }
+      if (!naissance) {
+        showToast('⚠️ La date de naissance est obligatoire.');
+        document.getElementById('catNaissance').focus();
+        return;
+      }
+
+      // Simulated save
+      document.getElementById('formArea').style.display = 'none';
+      document.getElementById('successArea').style.display = 'block';
+      showToast(`✅ ${nom} a été enregistré !`);
+    });
+
+    document.getElementById('btnAddAnother').addEventListener('click', () => {
+      document.getElementById('formArea').style.display = 'block';
+      document.getElementById('successArea').style.display = 'none';
+      document.getElementById('catNom').value = '';
+      document.getElementById('catSexe').value = '';
+      document.getElementById('catPuce').value = '';
+      document.getElementById('catTatouage').value = '';
+      document.getElementById('catNaissance').value = '';
+      document.getElementById('catCouleur').value = '';
+      descArea.value = '';
+      descCount.textContent = '0';
+      document.getElementById('catSante').value = '';
+      photosPreview.innerHTML = '';
+    });
+  </script>
+</body>
+</html>
