@@ -34,7 +34,7 @@ const CATS_DATA = [
     tatouage: "OR-2023-02",
     couleur: "Noir et blanc",
     statut: "disponible",
-    photo: "https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80",
+    photo: "https://images.unsplash.com/photo-1561948955-570b270e7c36?w=600&q=80",
     photos: [
       "https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80",
       "https://images.unsplash.com/photo-1561948955-570b270e7c36?w=600&q=80"
