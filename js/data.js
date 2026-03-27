@@ -110,9 +110,9 @@ const CATS_DATA = [
     tatouage: "TS-2025-01",
     couleur: "Roux et blanc",
     statut: "disponible",
-    photo: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
+    photo: "https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80",
     photos: [
-      "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80",
+      "https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80",
       "https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80"
     ],
     description: "Tsuki est un adorable chaton roux et blanc, encore tout petit et plein de candeur. Elle découvre le monde avec émerveillement et adore se blottir contre les humains.",
