@@ -17,13 +17,6 @@ refuge-animalier/
     └── data.js       ← Données mock + utilitaires partagés
 ```
 
-## 🚀 Déploiement sur GitHub Pages
-
-1. Créer un repository public sur GitHub
-2. Uploader tous les fichiers à la racine du repo
-3. Dans **Settings → Pages**, sélectionner la branche `main` et le dossier `/ (root)`
-4. Accéder à `https://<votre-username>.github.io/<nom-du-repo>/`
-
 ## 🔐 Connexion
 
 | Identifiant | Mot de passe |
